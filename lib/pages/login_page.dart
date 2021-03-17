@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _crearLogin(),
+                _crearLogin(context),
                 SizedBox(
                   height: 20,
                 ),
@@ -94,7 +94,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _crearLogin() {
+  Widget _crearLogin(BuildContext context) {
     return SingleChildScrollView(
       child: Card(
         elevation: 1.0,
@@ -107,13 +107,13 @@ class LoginPage extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           height: 400.0,
           width: 360.0,
-          child: _crearFormularioLogin(),
+          child: _crearFormularioLogin(context),
         ),
       ),
     );
   }
 
-  Widget _crearFormularioLogin() {
+  Widget _crearFormularioLogin(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -138,9 +138,7 @@ class LoginPage extends StatelessWidget {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
                       HexColor.fromHex(ColoresUtils.colorPrimarioFondo))),
-              onPressed: ()  {
-                
-              },
+              onPressed: () {},
               child: Text(
                 'Ingresar',
                 style: TextStyle(fontSize: 18.0),

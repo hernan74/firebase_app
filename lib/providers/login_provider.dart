@@ -1,3 +1,4 @@
+import 'package:fire_base_app/model/login_model.dart';
 import 'package:fire_base_app/providers/login_service.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +7,9 @@ class LoginProvider extends ChangeNotifier {
 
   String _token = '';
   bool _seLogeo = false;
+  LoginModel _loginModel = new LoginModel();
 
+  get loginModel => _loginModel;
   get token => _token;
   get seLogeo => _seLogeo;
 
