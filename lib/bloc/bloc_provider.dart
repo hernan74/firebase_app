@@ -1,8 +1,12 @@
-import 'package:fire_base_app/providers/login_stream.dart';
+import 'package:fire_base_app/providers/lat_long_stream.dart';
+import 'package:fire_base_app/providers/login/login_stream.dart';
+import 'package:fire_base_app/providers/usuarios/usuarios_stream.dart';
 import 'package:flutter/material.dart';
 
 class BlocProvider extends InheritedWidget {
   final loginStream = new LoginStream();
+  final latLngStream = new LatLngStream();
+  final usuariosStream = new UsuariosStream();
 
   static BlocProvider _instancia;
 
@@ -23,5 +27,17 @@ class BlocProvider extends InheritedWidget {
     return context
         .dependOnInheritedWidgetOfExactType<BlocProvider>()
         .loginStream;
+  }
+
+  static LatLngStream latLngBloc(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<BlocProvider>()
+        .latLngStream;
+  }
+
+  static UsuariosStream usuariosBloc(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<BlocProvider>()
+        .usuariosStream;
   }
 }

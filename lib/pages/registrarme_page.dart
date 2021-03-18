@@ -1,21 +1,23 @@
 import 'package:fire_base_app/bloc/bloc_provider.dart';
 import 'package:fire_base_app/providers/login/login_stream.dart';
+import 'package:fire_base_app/utils/colores.dart';
+import 'package:fire_base_app/utils/hex_color_util.dart';
 import 'package:fire_base_app/widget/circular_progress_indicator.dart';
 import 'package:fire_base_app/widget/crear_snack.dart';
 import 'package:fire_base_app/widget/elevate_button.dart';
 import 'package:fire_base_app/widget/fondo_personalizado.dart';
 import 'package:fire_base_app/widget/textfield_stream_builder.dart';
 import 'package:flutter/material.dart';
-
 import 'package:fire_base_app/providers/login/login_service_controller.dart';
-import 'package:fire_base_app/utils/colores.dart';
-import 'package:fire_base_app/utils/hex_color_util.dart';
 
-class LoginPage extends StatelessWidget {
+class RegistroPage extends StatelessWidget {
   final loginController = new LoginServiceController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Crear Nuevo Usuario'),
+      ),
       body: Stack(
         children: [
           _crearFondo(),
@@ -27,7 +29,6 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                _crearBotonOlvideClave(),
               ],
             ),
           ),
@@ -72,7 +73,6 @@ class LoginPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        _crearIconoLogin(),
         SizedBox(
           height: 10.0,
         ),
@@ -88,6 +88,12 @@ class LoginPage extends StatelessWidget {
             labelText: 'Contraseña',
             icon: Icons.lock,
             obscureText: true),
+        TextfieldStreamBuilder(
+            stream: loginBloc.repetirpasswordStream,
+            sink: loginBloc.repetirpasswordSink,
+            labelText: 'Repetir Contraseña',
+            icon: Icons.lock,
+            obscureText: true),
         SizedBox(
           width: 200.0,
           child: _crearBotonLogin(context),
@@ -99,75 +105,40 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _crearIconoLogin() {
-    return Column(
-      children: [
-        Icon(
-          Icons.account_circle_outlined,
-          size: 70.0,
-          color: HexColor.fromHex('#CED4DA').withOpacity(0.9),
-        ),
-        Text(
-          'Inicie Sesion',
-          style: TextStyle(
-              color: HexColor.fromHex('#CED4DA').withOpacity(0.9),
-              fontWeight: FontWeight.bold,
-              fontSize: 40.0),
-        )
-      ],
-    );
-  }
-
   Widget _crearBotonLogin(BuildContext context) {
     final LoginStream bloc = BlocProvider.of(context);
 
     return StreamBuilder(
-        stream: bloc.formLoginValidStream,
+        stream: bloc.formRegistroValidStream,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return CustomButton(
-            titulo: 'Ingresar',
+            titulo: 'Registrarme',
             colorBoton: snapshot.hasData
                 ? HexColor.fromHex(ColoresUtils.colorPrimarioFondo)
                 : Colors.grey.shade400,
-            icono: Icons.login,
+            icono: Icons.account_circle_outlined,
             textSize: 18.0,
             onPress: snapshot.hasData
                 ? () {
-                    _login(context, bloc);
+                    _crearUsuario(context, bloc);
                   }
                 : null,
           );
         });
   }
 
-  _login(BuildContext context, LoginStream bloc) async {
+  _crearUsuario(BuildContext context, LoginStream bloc) async {
     bloc.estadoLoginSink(false);
     Map<String, dynamic> resp =
-        await loginController.login(bloc.email, bloc.password);
+        await loginController.registro(bloc.email, bloc.password);
 
     if (resp['ok'] == true) {
-      Navigator.of(context).pushReplacementNamed('/');
-      bloc.setemailSink('');
-      bloc.setPasswordSink('');
+      mostrarSnackBar(context: context, msj: 'Se creo el usuario');
+      Navigator.pop(context);
     } else
       mostrarSnackBar(context: context, msj: resp['mensaje'], isError: true);
 
     print(resp['mensaje']);
     bloc.estadoLoginSink(true);
-  }
-
-  Widget _crearBotonOlvideClave() {
-    return SizedBox(
-        width: 250.0,
-        child: ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    HexColor.fromHex('#fafafa')),
-                elevation: MaterialStateProperty.all<double>(0.0)),
-            onPressed: () {},
-            child: Text(
-              'Olvide mi contraseña',
-              style: TextStyle(color: Colors.black45, fontSize: 18.0),
-            )));
   }
 }

@@ -13,7 +13,7 @@ class UsuarioModel {
         this.direccion,
     });
 
-    int id;
+    String id;
     String nombre;
     String apellido;
     int telefono;

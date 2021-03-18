@@ -3,6 +3,8 @@
    <application
         android:label="fire_base_app"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAvNgBLDupcwDrZRvwe4PLKaNi1zNldsj4"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
