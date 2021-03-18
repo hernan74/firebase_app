@@ -1,10 +1,12 @@
-import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
-
 import 'package:fire_base_app/preferencia_usuario/preferencia_usuario.dart';
-import 'package:fire_base_app/providers/login_provider.dart';
+import 'package:fire_base_app/utils/colores.dart';
+import 'package:fire_base_app/utils/hex_color_util.dart';
+import 'package:flutter/material.dart';
 import 'package:fire_base_app/pages/home_page.dart';
 import 'package:fire_base_app/pages/login_page.dart';
+import 'package:fire_base_app/pages/ficha_usuario.dart';
+
+import 'bloc/bloc_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,15 +20,21 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => LoginProvider()),
-      ],
+    return BlocProvider(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Fire Base',
         initialRoute: 'login',
-        routes: {'/': (_) => HomePage(), 'login': (_) => LoginPage()},
+        routes: {
+          '/': (_) => HomePage(),
+          'login': (_) => LoginPage(),
+          'ficha': (_) => FichaPage()
+        },
+        theme: ThemeData(
+            appBarTheme: AppBarTheme(
+                backgroundColor:
+                    HexColor.fromHex(ColoresUtils.colorPrimarioFondo)),
+            primaryColor: HexColor.fromHex(ColoresUtils.colorPrimarioFondo)),
       ),
     );
   }

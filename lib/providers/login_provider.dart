@@ -1,28 +1,18 @@
-import 'package:fire_base_app/model/login_model.dart';
+import 'package:fire_base_app/preferencia_usuario/preferencia_usuario.dart';
 import 'package:fire_base_app/providers/login_service.dart';
-import 'package:flutter/material.dart';
 
-class LoginProvider extends ChangeNotifier {
+class LoginServiceController {
   final loginProvider = new LoginService();
-
-  String _token = '';
-  bool _seLogeo = false;
-  LoginModel _loginModel = new LoginModel();
-
-  get loginModel => _loginModel;
-  get token => _token;
-  get seLogeo => _seLogeo;
-
-  void login({String email, String clave}) async {
-    Map<String, dynamic> resp = await loginProvider.login(
-        email: 'hernan@gmail.com', password: '123456');
+  final _prefs = new PreferenciasUsuario();
+  Future<Map<String, dynamic>> login(String email, String clave) async {
+    Map<String, dynamic> resp =
+        await loginProvider.login(email: email, password: clave);
     if (resp['ok'] == true) {
-      _token = resp['token'];
-      _seLogeo = true;
+      _prefs.token = resp['mensaje'];
+      return resp;
     } else {
-      _token = resp['mensaje'];
-      _seLogeo = false;
+      _prefs.token = '';
+      return resp;
     }
-    notifyListeners();
   }
 }

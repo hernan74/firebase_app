@@ -17,7 +17,7 @@ class PreferenciasUsuario {
   }
 
   // GET y SET del nombre
-  String get  token {
+  String get token {
     return _prefs.getString('token') ?? '';
   }
 
