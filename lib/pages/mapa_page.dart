@@ -1,5 +1,6 @@
 import 'package:fire_base_app/bloc/bloc_provider.dart';
 import 'package:fire_base_app/providers/lat_long_stream.dart';
+import 'package:fire_base_app/providers/usuarios/usuarios_stream.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -13,14 +14,16 @@ class MapaPage extends StatefulWidget {
 class _MapaPageState extends State<MapaPage> {
   Completer<GoogleMapController> _controller = Completer();
   LatLngStream latLngBloc;
+  UsuariosStream usuariosStream;
 
   @override
   Widget build(BuildContext context) {
     latLngBloc = BlocProvider.latLngBloc(context);
+    usuariosStream = BlocProvider.usuariosBloc(context);
 
     return Scaffold(
         appBar: AppBar(
-         backgroundColor: Colors.white.withOpacity(0.0),
+          backgroundColor: Colors.white.withOpacity(0.0),
         ),
         body: StreamBuilder(
             stream: latLngBloc.markerStream,
@@ -47,6 +50,8 @@ class _MapaPageState extends State<MapaPage> {
                           onTap: () {
                             Navigator?.pop(context);
                             latLngBloc.latLngSeleccionadoSink(latLang);
+                            usuariosStream.setUbicacionUsuario(
+                                '${latLang.latitude},' '${latLang.longitude}');
                           },
                         ))
                   });

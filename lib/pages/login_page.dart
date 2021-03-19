@@ -79,12 +79,14 @@ class LoginPage extends StatelessWidget {
         TextfieldStreamBuilder(
           stream: loginBloc.emailStream,
           sink: loginBloc.emailSink,
+          valor: loginBloc.email,
           labelText: 'Correo Electronico',
           icon: Icons.alternate_email_outlined,
         ),
         TextfieldStreamBuilder(
             stream: loginBloc.passwordStream,
             sink: loginBloc.passwordSink,
+            valor: loginBloc.password,
             labelText: 'Contraseña',
             icon: Icons.lock,
             obscureText: true),

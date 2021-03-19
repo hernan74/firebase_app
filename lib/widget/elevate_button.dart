@@ -17,19 +17,22 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(colorBoton)),
-      onPressed: onPress,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          if (icono != null) Icon(icono, color: colorTexto),
-          Text(
-            titulo,
-            style: TextStyle(fontSize: textSize, color: colorTexto),
-          )
-        ],
+    return SizedBox(
+      width: 200.0,
+      child: ElevatedButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(colorBoton)),
+        onPressed: onPress,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (icono != null) Icon(icono, color: colorTexto),
+            Text(
+              titulo,
+              style: TextStyle(fontSize: textSize, color: colorTexto),
+            )
+          ],
+        ),
       ),
     );
   }

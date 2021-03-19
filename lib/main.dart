@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Fire Base',
-        initialRoute: '/',
+        initialRoute: 'login',
         routes: {
           '/': (_) => HomePage(),
           'login': (_) => LoginPage(),

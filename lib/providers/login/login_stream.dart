@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:fire_base_app/validators/validator.dart';
+import 'package:fire_base_app/validators/login_validator.dart';
 import 'package:rxdart/rxdart.dart';
 
-class LoginStream with Validator {
+class LoginStream with LoginValidator {
   final _emailController = new BehaviorSubject<String>();
   final _passwordController = new BehaviorSubject<String>();
   final _repetirpasswordController = new BehaviorSubject<String>();

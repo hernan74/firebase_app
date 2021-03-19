@@ -1,8 +1,8 @@
 import 'dart:async';
 
-class Validator {
+class LoginValidator {
 
-  final passwordValidator = new StreamTransformer<String, String>.fromHandlers(
+  final passwordValidator = new StreamTransformer<String, String>.fromHandlers( 
     handleData: (password, sink) {
       if (password.length >= 6) {
         sink.add(password);

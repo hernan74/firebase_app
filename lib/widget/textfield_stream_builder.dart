@@ -6,6 +6,7 @@ class TextfieldStreamBuilder extends StatelessWidget {
   final Stream<String> stream;
   final Function(String) sink;
   final String labelText;
+  final String valor;
   final IconData icon;
   final bool obscureText;
 
@@ -14,13 +15,15 @@ class TextfieldStreamBuilder extends StatelessWidget {
       @required this.sink,
       @required this.labelText,
       @required this.icon,
+      @required this.valor,
       this.obscureText = false});
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: stream,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          return TextField(
+          return TextFormField(
+            initialValue: valor,
             obscureText: obscureText,
             decoration: InputDecoration(
                 prefixIcon: Icon(
@@ -29,7 +32,6 @@ class TextfieldStreamBuilder extends StatelessWidget {
                 ),
                 border: OutlineInputBorder(),
                 labelText: labelText,
-                counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: sink,
           );
