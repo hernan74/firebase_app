@@ -14,14 +14,14 @@ class UsuariosService {
       'auth': prefs.token,
     });
 
-    Map<String, dynamic> decodeData;
     try {
       final resp = await http.get(url);
 
-      decodeData = json.decode(resp.body);
+      Map<String, dynamic> decodeData = json.decode(resp.body);
 
       if (resp.statusCode == 200) {
         List<UsuarioModel> lista = [];
+        if (decodeData == null) return {'ok': true, 'valor': lista};
 
         decodeData.forEach((id, usu) {
           final usuTemp = UsuarioModel.fromJson(usu);
@@ -33,7 +33,7 @@ class UsuariosService {
         return {'ok': false, 'mensaje': decodeData['error']['message']};
       }
     } catch (e) {
-      return {'ok': false, 'mensaje': decodeData['error']['message']};
+      return {'ok': false, 'mensaje': e.toString()};
     }
   }
 
@@ -41,15 +41,14 @@ class UsuariosService {
     final url = Uri.https(_urlFireBase, '/usuarios.json', {
       'auth': prefs.token,
     });
-
-    final resp = await http.post(url, body: usuarioModelToJson(model));
-    dynamic decodeData;
     try {
-      decodeData = json.decode(resp.body);
+      final resp = await http.post(url, body: usuarioModelToJson(model));
+
+      final dynamic decodeData = json.decode(resp.body);
 
       return {'ok': true, 'valor': decodeData['name']};
     } catch (e) {
-      return {'ok': false, 'mensaje': decodeData['error']['message']};
+      return {'ok': false, 'mensaje': e.toString()};
     }
   }
 
@@ -57,16 +56,13 @@ class UsuariosService {
     final url = Uri.https(_urlFireBase, '/usuarios/${model.id}.json', {
       'auth': prefs.token,
     });
-
-    final resp = await http.put(url, body: usuarioModelToJson(model));
-
-    dynamic decodeData;
     try {
-      decodeData = json.decode(resp.body);
+      final resp = await http.put(url, body: usuarioModelToJson(model));
 
-      return {'ok': true, 'valor': decodeData['name']};
+
+      return {'ok': true, 'valor': UsuarioModel.fromJson(json.decode(resp.body))};
     } catch (e) {
-      return {'ok': false, 'mensaje': decodeData['error']['message']};
+      return {'ok': false, 'mensaje': e.toString()};
     }
   }
 
@@ -74,17 +70,15 @@ class UsuariosService {
     final url = Uri.https(Uri.encodeFull(_urlFireBase), '/usuarios/$id.json', {
       'auth': prefs.token,
     });
-
-    final resp = await http.delete(url);
-
-    dynamic decodeData;
     try {
+      final resp = await http.delete(url);
+
       if (resp.statusCode == 200)
-        return {'ok': true, 'valor': decodeData['name']};
+        return {'ok': true, 'valor': 'Se elimino el usuario'};
       else
         return {'ok': false, 'mensaje': 'No se pudo eliminar el usuario'};
     } catch (e) {
-      return {'ok': false, 'mensaje': decodeData['error']['message']};
+      return {'ok': false, 'mensaje': e.toString()};
     }
   }
 }

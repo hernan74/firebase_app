@@ -20,7 +20,10 @@ class _MapaPageState extends State<MapaPage> {
   Widget build(BuildContext context) {
     latLngBloc = BlocProvider.latLngBloc(context);
     usuariosStream = BlocProvider.usuariosBloc(context);
-
+    final ubicacionUsuario = usuariosStream.usuario.getLatLgn();
+    latLngBloc.latLngSeleccionadoSink(ubicacionUsuario);
+    if (ubicacionUsuario != null)
+      latLngBloc.markerSink({_agregarMarker(ubicacionUsuario)});
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white.withOpacity(0.0),
@@ -39,22 +42,7 @@ class _MapaPageState extends State<MapaPage> {
                 ),
                 onTap: (latLang) {
                   latLngBloc.marker?.clear();
-                  latLngBloc.markerSink({
-                    new Marker(
-                        markerId: MarkerId('seleccion'),
-                        position: latLang,
-                        infoWindow: InfoWindow(
-                          title: 'Ubicacion ',
-                          snippet:
-                              ' ${latLang.latitude.toStringAsFixed(7)} , ${latLang.longitude.toStringAsFixed(7)} ',
-                          onTap: () {
-                            Navigator?.pop(context);
-                            latLngBloc.latLngSeleccionadoSink(latLang);
-                            usuariosStream.setUbicacionUsuario(
-                                '${latLang.latitude},' '${latLang.longitude}');
-                          },
-                        ))
-                  });
+                  latLngBloc.markerSink({_agregarMarker(latLang)});
                 },
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
@@ -64,5 +52,22 @@ class _MapaPageState extends State<MapaPage> {
                 },
               );
             }));
+  }
+
+  Marker _agregarMarker(LatLng latLng) {
+    return new Marker(
+        markerId: MarkerId('seleccion'),
+        position: latLng,
+        infoWindow: InfoWindow(
+          title: 'Ubicacion ',
+          snippet:
+              ' ${latLng.latitude.toStringAsFixed(7)} , ${latLng.longitude.toStringAsFixed(7)} ',
+          onTap: () {
+            Navigator?.pop(context);
+            latLngBloc.latLngSeleccionadoSink(latLng);
+            usuariosStream.setUbicacionUsuario(
+                '${latLng.latitude},' '${latLng.longitude}');
+          },
+        ));
   }
 }

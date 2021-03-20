@@ -17,41 +17,62 @@ class UsuarioServiceController {
   }
 
   void buscarTodos() async {
+    provider.estadoCargaSink(false);
     Map<String, dynamic> resp = await usuarioService.buscarTodos();
     if (resp['ok'] == true) {
       if (resp.containsKey('valor')) provider.cargarUsuarios(resp['valor']);
     } else {
-      mostrarSnackBar(context: context, msj: resp['valor']);
+      mostrarSnackBar(context: context, msj: resp['mensaje']);
     }
+    provider.estadoCargaSink(true);
   }
 
   Future<bool> nuevo(UsuarioModel usuario) async {
+    if (provider.estadoCarga == false) return false;
+    provider.estadoCargaSink(false);
     Map<String, dynamic> resp = await usuarioService.nuevo(usuario);
     if (resp['ok'] == true) {
-      if (resp.containsKey('valor')) return true;
+      if (resp.containsKey('valor')) {
+        buscarTodos();
+        return true;
+      }
     } else {
       mostrarSnackBar(context: context, msj: resp['mensaje']);
     }
+
+    provider.estadoCargaSink(true);
     return false;
   }
 
   Future<bool> modificar(UsuarioModel usuario) async {
+    if (provider.estadoCarga == false) return false;
+    provider.estadoCargaSink(false);
     Map<String, dynamic> resp = await usuarioService.modificar(usuario);
     if (resp['ok'] == true) {
-      if (resp.containsKey('valor')) return true;
+      if (resp.containsKey('valor')) {
+        buscarTodos();
+
+        provider.estadoCargaSink(true);
+        return true;
+      }
     } else {
-      mostrarSnackBar(context: context, msj: resp['mensaje']);
+      mostrarSnackBar(context: context, msj: resp['mensaje'], isError: true);
     }
+
+    provider.estadoCargaSink(true);
     return false;
   }
 
   Future<bool> eliminar(String id) async {
+    provider.estadoCargaSink(false);
     Map<String, dynamic> resp = await usuarioService.eliminar(id);
     if (resp['ok'] == true) {
-      if (resp.containsKey('valor')) return true;
+      return true;
     } else {
-      mostrarSnackBar(context: context, msj: resp['mensaje']);
+      mostrarSnackBar(context: context, msj: resp['mensaje'], isError: true);
     }
+
+    provider.estadoCargaSink(true);
     return false;
   }
 }

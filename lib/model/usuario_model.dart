@@ -23,7 +23,10 @@ class UsuarioModel {
   String ubicacion;
 
   LatLng getLatLgn() {
+    if (this.ubicacion == null) return null;
+
     final latLng = this.ubicacion.split(',');
+    if (latLng.isEmpty || latLng.length != 2) return null;
     final lat = double.parse(latLng[0] ?? '0.0');
     final lng = double.parse(latLng[1] ?? '0.0');
 

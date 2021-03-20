@@ -5,6 +5,8 @@ import 'package:fire_base_app/validators/usaurio_validator.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UsuariosStream with UsuarioValidator {
+  final _estadoCarga = new BehaviorSubject<bool>();
+
   final _usuariosStreamController = new BehaviorSubject<List<UsuarioModel>>();
   final _usuarioStreamController = new BehaviorSubject<UsuarioModel>();
 
@@ -36,12 +38,14 @@ class UsuariosStream with UsuarioValidator {
   Stream<UsuarioModel> get usuarioStream => _usuarioStreamController.stream;
 
   UsuarioModel get usuario => _usuarioStreamController.value;
+  List<UsuarioModel> get usuarios => _usuariosStreamController.value;
 
 //propiedades usuario
   Stream<String> get idUsuarioStream => _idUsuarioController.stream;
   Stream<String> get nombreUsuarioStream =>
       _nombreUsuarioController.stream.transform(nombreValidator);
-  Stream<String> get apellidoUsuarioStream => _apellidoUsuarioController.stream;
+  Stream<String> get apellidoUsuarioStream =>
+      _apellidoUsuarioController.stream.transform(apellidoValidator);
   Stream<String> get telefonoUsuarioStream =>
       _telefonoUsuarioController.stream.transform(telefonoValidator);
   Stream<String> get ubicacionUsuarioStream =>
@@ -88,9 +92,18 @@ class UsuariosStream with UsuarioValidator {
     return await aux.first;
   }
 
+  void estadoCargaSink(bool valor) {
+    _estadoCarga.sink.add(valor);
+  }
+
+  Stream<bool> get estadoCargaStream => _estadoCarga.stream;
+
+  bool get estadoCarga => _estadoCarga.value;
+
   void disposeStreams() {
     _usuariosStreamController.close();
     _usuarioStreamController.close();
+    _estadoCarga.close();
 
     _idUsuarioController.close();
     _nombreUsuarioController.close();

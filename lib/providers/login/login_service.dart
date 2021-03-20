@@ -11,12 +11,13 @@ class LoginService {
       'password': password,
       'returnSecureToken': true,
     };
-    final resp = await http.post(
-        Uri.parse(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$_fireBaseToken'),
-        body: json.encode(authData));
 
     try {
+      final resp = await http.post(
+          Uri.parse(
+              'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$_fireBaseToken'),
+          body: json.encode(authData));
+
       if (resp.statusCode == 200) {
         Map<String, dynamic> decodeResp = json.decode(resp.body);
 
@@ -29,24 +30,24 @@ class LoginService {
         return {'ok': false, 'mensaje': 'No se pudo conectar al servidor'};
       }
     } catch (e) {
-      return {'ok': false, 'mensaje': 'No se pudo conectar al servidor'};
+      return {'ok': false, 'mensaje': e.toString()};
     }
   }
 
-  Future<Map<String, dynamic>> registro(
-      {String email, String password}) async {
+  Future<Map<String, dynamic>> registro({String email, String password}) async {
     final authData = {
       'email': email,
       'password': password,
       'returnSecureToken': true,
     };
-    final resp = await http.post(
-        Uri.parse(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$_fireBaseToken'),
-        body: json.encode(authData));
-
-    Map<String, dynamic> decodeResp = json.decode(resp.body);
     try {
+      final resp = await http.post(
+          Uri.parse(
+              'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$_fireBaseToken'),
+          body: json.encode(authData));
+
+      Map<String, dynamic> decodeResp = json.decode(resp.body);
+
       if (resp.statusCode == 200) {
         if (decodeResp.containsKey('idToken')) {
           return {'ok': true, 'token': decodeResp['idToken']};
@@ -57,7 +58,7 @@ class LoginService {
         return {'ok': false, 'mensaje': decodeResp['error']['message']};
       }
     } catch (e) {
-      return {'ok': false, 'mensaje': decodeResp['error']['message']};
+      return {'ok': false, 'mensaje': e.toString()};
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:fire_base_app/model/usuario_model.dart';
 import 'package:fire_base_app/providers/usuarios/usuarios_service_controller.dart';
 import 'package:fire_base_app/utils/colores.dart';
 import 'package:fire_base_app/utils/hex_color_util.dart';
+import 'package:fire_base_app/widget/circular_progress_indicator.dart';
 import 'package:fire_base_app/widget/elevate_button.dart';
 import 'package:fire_base_app/widget/textfield_stream_builder.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 class FichaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final usuarioStream = BlocProvider.usuariosBloc(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Ficha'),
@@ -18,7 +20,16 @@ class FichaPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: _crearFormulario(context),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                _crearFormulario(context),
+                CustomCircularProgressIndicator(
+                  progreso: usuarioStream.estadoCargaStream,
+                  child: Container(),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -102,7 +113,7 @@ class FichaPage extends StatelessWidget {
                     if (resp) {
                       usuarioStream.usuarioUsuario = new UsuarioModel();
                       latLngStream.latLngSeleccionadoSink(null);
-                      latLngStream.marker.clear();
+                      latLngStream.marker?.clear();
                       Navigator.pop(context);
                     }
                   }

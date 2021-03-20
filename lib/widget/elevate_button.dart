@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String titulo;
   final double textSize;
+  final double withBoton;
   final IconData icono;
   final Color colorBoton;
   final Color colorTexto;
@@ -10,6 +11,7 @@ class CustomButton extends StatelessWidget {
   CustomButton(
       {@required this.titulo,
       this.textSize = 18,
+      this.withBoton = 200.0,
       this.icono,
       this.colorBoton,
       this.colorTexto = Colors.white,
@@ -18,7 +20,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200.0,
+      width: withBoton,
       child: ElevatedButton(
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(colorBoton)),

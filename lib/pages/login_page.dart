@@ -15,6 +15,7 @@ class LoginPage extends StatelessWidget {
   final loginController = new LoginServiceController();
   @override
   Widget build(BuildContext context) {
+    final LoginStream loginStream = BlocProvider.of(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -31,7 +32,11 @@ class LoginPage extends StatelessWidget {
               ],
             ),
           ),
-          Center(child: CustomCircularProgressIndicator())
+          Center(
+              child: CustomCircularProgressIndicator(
+            progreso: loginStream.estadoLoginStream,
+            child: Container(),
+          ))
         ],
       ),
     );

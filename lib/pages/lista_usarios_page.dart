@@ -3,9 +3,17 @@ import 'package:fire_base_app/model/usuario_model.dart';
 import 'package:fire_base_app/providers/usuarios/usuarios_service_controller.dart';
 import 'package:fire_base_app/providers/usuarios/usuarios_stream.dart';
 import 'package:fire_base_app/utils/hex_color_util.dart';
+import 'package:fire_base_app/widget/circular_progress_indicator.dart';
+import 'package:fire_base_app/widget/crear_snack.dart';
+import 'package:fire_base_app/widget/elevate_button.dart';
 import 'package:flutter/material.dart';
 
-class ListaUsuarioPage extends StatelessWidget {
+class ListaUsuarioPage extends StatefulWidget {
+  @override
+  _ListaUsuarioPageState createState() => _ListaUsuarioPageState();
+}
+
+class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
   @override
   Widget build(BuildContext context) {
     final provider = BlocProvider.usuariosBloc(context);
@@ -13,10 +21,15 @@ class ListaUsuarioPage extends StatelessWidget {
 
     usuarioService.buscarTodos();
 
-    return _cargarListadoUsuario(provider);
+    return Center(
+      child: CustomCircularProgressIndicator(
+        progreso: provider.estadoCargaStream,
+        child: _cargarListadoUsuario(provider,context),
+      ),
+    );
   }
 
-  Widget _cargarListadoUsuario(UsuariosStream provider) {
+  Widget _cargarListadoUsuario(UsuariosStream provider,BuildContext buildContext) {
     return StreamBuilder(
         stream: provider.usuariosStream,
         builder:
@@ -26,8 +39,8 @@ class ListaUsuarioPage extends StatelessWidget {
                 itemCount: snapshot.data.length,
                 itemBuilder: (_, i) {
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _crearItem(snapshot.data[i], context),
+                    padding: const EdgeInsets.all(3.0),
+                    child: _crearItem(snapshot.data[i], buildContext),
                   );
                 });
           } else {
@@ -48,11 +61,47 @@ class ListaUsuarioPage extends StatelessWidget {
   Widget _crearItem(UsuarioModel model, BuildContext context) {
     final usuarioStream = BlocProvider.usuariosBloc(context);
     final usuarioService = new UsuarioServiceController(context);
-
+    final uniqueKey = UniqueKey();
     return Dismissible(
-        key: UniqueKey(),
-        onDismissed: (direction) {
-          usuarioService.eliminar(model.id);
+        background: Container(
+          padding: EdgeInsets.only(left: 10.0),
+          alignment: AlignmentDirectional.centerStart,
+          height: 100.0,
+          width: 100.0,
+          child: Icon(
+            Icons.delete_outline_rounded,
+            size: 50.0,
+            color: Colors.white,
+          ),
+          color: Colors.red,
+        ),
+        secondaryBackground: Container(
+          padding: EdgeInsets.only(right: 10.0),
+          alignment: AlignmentDirectional.centerEnd,
+          height: 100.0,
+          width: 100.0,
+          child: Icon(
+            Icons.edit,
+            size: 50.0,
+            color: Colors.white,
+          ),
+          color: Colors.blue,
+        ),
+        key: uniqueKey,
+        confirmDismiss: (DismissDirection direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            return await _mensajeConfirmacion(context);
+          } else {
+            usuarioStream.usuarioUsuario = model;
+            Navigator.of(context).pushNamed('ficha');
+            return false;
+          }
+        },
+        onDismissed: (direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            if (await usuarioService.eliminar(model.id)) setState(() {});
+            mostrarSnackBar(context: context, msj: 'Se elimino el usuario');
+          }
         },
         child: GestureDetector(
             onTap: () {
@@ -62,14 +111,36 @@ class ListaUsuarioPage extends StatelessWidget {
             child: _crearContenidoItem(model)));
   }
 
+  Future<bool> _mensajeConfirmacion(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmar Accion"),
+          content: const Text("¿Esta seguro de eliminar el usuario?"),
+          actions: <Widget>[
+            CustomButton(
+                titulo: 'Confirmar',
+                withBoton: 120.0,
+                onPress: () => Navigator.of(context).pop(true)),
+            CustomButton(
+                titulo: 'Cancelar',
+                withBoton: 110.0,
+                onPress: () => Navigator.of(context).pop(false)),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _crearContenidoItem(UsuarioModel model) {
     TextStyle tituloStyle = TextStyle(fontSize: 18, color: Colors.black45);
     TextStyle contenidoStyle = TextStyle(
-        fontSize: 25,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
         color: HexColor.fromHex('#1F1F1F'));
     return Card(
-      elevation: 5.0,
+      elevation: 0,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -111,7 +182,13 @@ class ListaUsuarioPage extends StatelessWidget {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5.0),
-                child: _crearIcono(Icons.map_outlined, 40.0),
+                child: GestureDetector(
+                    onTap: () {
+                      final usuarioStream = BlocProvider.usuariosBloc(context);
+                      usuarioStream.usuarioUsuario = model;
+                      Navigator.of(context).pushNamed('mapa');
+                    },
+                    child: _crearIcono(Icons.map_outlined, 40.0)),
               )
             ],
           ),
