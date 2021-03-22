@@ -13,14 +13,26 @@ class CustomCircularProgressIndicator extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return snapshot.data
               ? child
-              : Container(
-                  padding: EdgeInsets.all(20.0),
-                  width: 130,
-                  height: 130,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      color: Colors.black54.withOpacity(0.4)),
-                  child: CircularProgressIndicator());
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(20.0),
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15.0),
+                            color: Colors.black54.withOpacity(0.4)),
+                        child: CircularProgressIndicator()),
+                    Text(
+                      'Procesando',
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54),
+                    ),
+                  ],
+                );
         });
   }
 }

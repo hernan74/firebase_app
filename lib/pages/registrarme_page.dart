@@ -15,6 +15,9 @@ class RegistroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final LoginStream loginStream = BlocProvider.of(context);
+    loginStream.setemailSink('');
+    loginStream.setPasswordSink('');
+    loginStream.setRepPasswordSink('');
     return Scaffold(
       appBar: AppBar(
         title: Text('Crear Nuevo Usuario'),
@@ -35,7 +38,9 @@ class RegistroPage extends StatelessWidget {
           ),
           Center(
               child: CustomCircularProgressIndicator(
-                  progreso: loginStream.estadoLoginStream,child: Container(),))
+            progreso: loginStream.estadoLoginStream,
+            child: Container(),
+          ))
         ],
       ),
     );
@@ -53,22 +58,30 @@ class RegistroPage extends StatelessWidget {
   }
 
   Widget _crearLogin(BuildContext context) {
-    return SingleChildScrollView(
-      child: Card(
-        elevation: 1.0,
-        color: HexColor.fromHex(ColoresUtils.colorSegundarioFondo)
-            .withOpacity(0.95),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        ),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          height: 400.0,
-          width: 360.0,
-          child: _crearFormularioLogin(context),
-        ),
-      ),
-    );
+    final LoginStream loginStream = BlocProvider.of(context);
+    return StreamBuilder(
+        stream: loginStream.estadoLoginStream,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return IgnorePointer(
+            ignoring: snapshot.hasData ? !snapshot.data : false,
+            child: SingleChildScrollView(
+              child: Card(
+                elevation: 1.0,
+                color: HexColor.fromHex(ColoresUtils.colorSegundarioFondo)
+                    .withOpacity(0.95),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  height: 400.0,
+                  width: 360.0,
+                  child: _crearFormularioLogin(context),
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   Widget _crearFormularioLogin(BuildContext context) {

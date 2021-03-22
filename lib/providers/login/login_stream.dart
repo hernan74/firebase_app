@@ -18,6 +18,9 @@ class LoginStream with LoginValidator {
       _repetirpasswordController.sink.add;
 
   void setPasswordSink(String pass) => _passwordController.sink.add(pass);
+  
+  void setRepPasswordSink(String pass) =>
+      _repetirpasswordController.sink.add(pass);
 
   void estadoLoginSink(bool valor) {
     _estadoLogin.sink.add(valor);

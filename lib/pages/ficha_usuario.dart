@@ -16,23 +16,30 @@ class FichaPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Ficha'),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                _crearFormulario(context),
-                CustomCircularProgressIndicator(
-                  progreso: usuarioStream.estadoCargaStream,
-                  child: Container(),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: StreamBuilder(
+          stream: usuarioStream.estadoCargaStream,
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            return IgnorePointer(
+              ignoring: snapshot.hasData ? !snapshot.data : false,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        _crearFormulario(context),
+                        CustomCircularProgressIndicator(
+                          progreso: usuarioStream.estadoCargaStream,
+                          child: Container(),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
     );
   }
 
