@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:fire_base_app/utils/number_utils.dart';
+import 'file:///D:/Usuarios/Soporte/Documents/Flutter_Projects/fire_base_app/number_utils.dart';
 
 class UsuarioValidator {
   final nombreValidator = new StreamTransformer<String, String>.fromHandlers(

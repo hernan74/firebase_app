@@ -101,7 +101,7 @@ class UsuariosStream with UsuarioValidator {
   bool get estadoCarga => _estadoCarga.value;
 
   void disposeStreams() {
-    _usuariosStreamController.close();
+    _usuariosStreamController?.close();
     _usuarioStreamController.close();
     _estadoCarga.close();
 
