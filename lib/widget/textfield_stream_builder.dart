@@ -32,7 +32,7 @@ class TextfieldStreamBuilder extends StatelessWidget {
                 ),
                 border: OutlineInputBorder(),
                 labelText: labelText,
-                errorText: snapshot.error),
+                errorText: snapshot?.error),
             onChanged: sink,
           );
         });

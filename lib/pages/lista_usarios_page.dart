@@ -7,6 +7,8 @@ import 'package:fire_base_app/widget/circular_progress_indicator.dart';
 import 'package:fire_base_app/widget/crear_snack.dart';
 import 'package:fire_base_app/widget/elevate_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ListaUsuarioPage extends StatefulWidget {
   @override
@@ -24,12 +26,13 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
     return Center(
       child: CustomCircularProgressIndicator(
         progreso: provider.estadoCargaStream,
-        child: _cargarListadoUsuario(provider,context),
+        child: _cargarListadoUsuario(provider, context),
       ),
     );
   }
 
-  Widget _cargarListadoUsuario(UsuariosStream provider,BuildContext buildContext) {
+  Widget _cargarListadoUsuario(
+      UsuariosStream provider, BuildContext buildContext) {
     return StreamBuilder(
         stream: provider.usuariosStream,
         builder:
@@ -61,54 +64,39 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
   Widget _crearItem(UsuarioModel model, BuildContext context) {
     final usuarioStream = BlocProvider.usuariosBloc(context);
     final usuarioService = new UsuarioServiceController(context);
-    final uniqueKey = UniqueKey();
-    return Dismissible(
-        background: Container(
-          padding: EdgeInsets.only(left: 10.0),
-          alignment: AlignmentDirectional.centerStart,
-          height: 100.0,
-          width: 100.0,
-          child: Icon(
-            Icons.delete_outline_rounded,
-            size: 50.0,
-            color: Colors.white,
-          ),
-          color: Colors.red,
-        ),
-        secondaryBackground: Container(
-          padding: EdgeInsets.only(right: 10.0),
-          alignment: AlignmentDirectional.centerEnd,
-          height: 100.0,
-          width: 100.0,
-          child: Icon(
-            Icons.edit,
-            size: 50.0,
-            color: Colors.white,
-          ),
-          color: Colors.blue,
-        ),
-        key: uniqueKey,
-        confirmDismiss: (DismissDirection direction) async {
-          if (direction == DismissDirection.startToEnd) {
-            return await _mensajeConfirmacion(context);
-          } else {
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 1 / 3,
+      child: GestureDetector(
+          onTap: () {
             usuarioStream.usuarioUsuario = model;
             Navigator.of(context).pushNamed('ficha');
-            return false;
-          }
-        },
-        onDismissed: (direction) async {
-          if (direction == DismissDirection.startToEnd) {
-            if (await usuarioService.eliminar(model.id)) setState(() {});
+          },
+          child: _crearContenidoItem(model)),
+      actions: <Widget>[
+        IconSlideAction(
+          caption: 'Eliminar',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () async {
+            if (await _mensajeConfirmacion(context)) if (await usuarioService
+                .eliminar(model.id)) setState(() {});
             mostrarSnackBar(context: context, msj: 'Se elimino el usuario');
-          }
-        },
-        child: GestureDetector(
-            onTap: () {
-              usuarioStream.usuarioUsuario = model;
-              Navigator.of(context).pushNamed('ficha');
-            },
-            child: _crearContenidoItem(model)));
+          },
+        ),
+      ],
+      secondaryActions: [
+        IconSlideAction(
+          caption: 'Editar',
+          color: Colors.blue,
+          icon: Icons.edit,
+          onTap: () {
+            usuarioStream.usuarioUsuario = model;
+            Navigator.of(context).pushNamed('ficha');
+          },
+        ),
+      ],
+    );
   }
 
   Future<bool> _mensajeConfirmacion(BuildContext context) async {
@@ -155,7 +143,8 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black12.withOpacity(0.1)),
                   ),
-                  child: _crearIcono(Icons.account_circle_outlined, 50.0),
+                  child: _crearIcono(
+                      icono: Icons.account_circle_outlined, size: 50.0),
                 ),
                 _crearCampoUsuario(model, tituloStyle, contenidoStyle),
               ],
@@ -188,7 +177,7 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
                       usuarioStream.usuarioUsuario = model;
                       Navigator.of(context).pushNamed('mapa');
                     },
-                    child: _crearIcono(Icons.map_outlined, 40.0)),
+                    child: _crearIcono(icono: Icons.map_outlined, size: 40.0)),
               )
             ],
           ),
@@ -197,10 +186,11 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
     );
   }
 
-  Widget _crearIcono(IconData icono, double size) {
+  Widget _crearIcono(
+      {IconData icono, double size, Color color = Colors.black54}) {
     return Icon(
       icono,
-      color: Colors.black54,
+      color: color,
       size: size,
     );
   }
@@ -208,7 +198,7 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
   Widget _crearCampoLatLgn(String latLgn, double valor, TextStyle style) {
     return Row(
       children: <Widget>[
-        _crearIcono(Icons.location_on_outlined, 18.0),
+        _crearIcono(icono: Icons.location_on_outlined, size: 18.0),
         Text('$latLgn: '),
         Text(
           '$valor ',
@@ -224,9 +214,19 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(
-            'Usuario',
-            style: tituloStyle,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(
+                width: 60.0,
+              ),
+              Text(
+                'Usuario',
+                style: tituloStyle,
+              ),
+              IgnorePointer(
+                  ignoring: true, child: _crearItemRating(model.calificacion)),
+            ],
           ),
           Divider(),
           Column(
@@ -237,7 +237,7 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
                 style: contenidoStyle,
               ),
               Text(
-                '   Telefono: ${model.telefono} ',
+                '  Telefono: ${model.telefono} ',
                 style: tituloStyle,
               ),
               Divider(
@@ -247,6 +247,48 @@ class _ListaUsuarioPageState extends State<ListaUsuarioPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _crearItemRating(double rating) {
+    final double aux =
+        (rating - rating.toInt()) == 0 ? 1 : (rating - rating.toInt());
+    return Row(
+      children: [
+        SizedBox(
+          width: 60.0,
+        ),
+        RatingBar.builder(
+          initialRating: rating == null ? 0.0 : aux,
+          itemCount: 1,
+          allowHalfRating: true,
+          itemSize: 20,
+          itemBuilder: (context, index) {
+            switch (rating?.toInt() ?? 0) {
+              case 0:
+                return _crearIcono(
+                    icono: Icons.star, color: Colors.red, size: 20);
+              case 1:
+                return _crearIcono(
+                    icono: Icons.star, color: Colors.redAccent, size: 20);
+              case 2:
+                return _crearIcono(
+                    icono: Icons.star, color: Colors.amber, size: 20);
+              case 3:
+                return _crearIcono(
+                    icono: Icons.star, color: Colors.lightGreen, size: 20);
+              default:
+                return _crearIcono(
+                    icono: Icons.star, color: Colors.green, size: 20);
+            }
+          },
+          onRatingUpdate: (value) => '',
+        ),
+        Text(
+          '${rating?.toString() ?? '0.0'} ',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        )
+      ],
     );
   }
 }

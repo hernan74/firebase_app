@@ -27,7 +27,7 @@ class LoginService {
           return {'ok': false, 'mensaje': decodeResp['error']['message']};
         }
       } else {
-        return {'ok': false, 'mensaje': 'No se pudo conectar al servidor'};
+        return {'ok': false, 'mensaje': resp.reasonPhrase};
       }
     } catch (e) {
       return {'ok': false, 'mensaje': e.toString()};
@@ -54,8 +54,10 @@ class LoginService {
         } else {
           return {'ok': false, 'mensaje': decodeResp['error']['message']};
         }
+      } else if (resp.statusCode == 401) {
+        return {'ok': false, '401': resp.reasonPhrase};
       } else {
-        return {'ok': false, 'mensaje': decodeResp['error']['message']};
+        return {'ok': false, 'mensaje': resp.reasonPhrase};
       }
     } catch (e) {
       return {'ok': false, 'mensaje': e.toString()};

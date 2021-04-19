@@ -14,6 +14,8 @@ class UsuarioModel {
     this.apellido,
     this.telefono,
     this.ubicacion,
+    this.observaciones,
+    this.calificacion=0.0,
   });
 
   String id;
@@ -21,6 +23,8 @@ class UsuarioModel {
   String apellido;
   int telefono;
   String ubicacion;
+  String observaciones;
+  double calificacion;
 
   LatLng getLatLgn() {
     if (this.ubicacion == null) return null;
@@ -48,6 +52,8 @@ class UsuarioModel {
         apellido: json["apellido"],
         telefono: json["telefono"],
         ubicacion: json["ubicacion"],
+        observaciones: json["observaciones"],
+        calificacion: json["calificacion"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -56,5 +62,7 @@ class UsuarioModel {
         "apellido": apellido,
         "telefono": telefono,
         "ubicacion": ubicacion,
+        "observaciones": observaciones,
+        "calificacion": calificacion,
       };
 }

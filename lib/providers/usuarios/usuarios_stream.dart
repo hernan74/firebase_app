@@ -15,6 +15,8 @@ class UsuariosStream with UsuarioValidator {
   final _apellidoUsuarioController = new BehaviorSubject<String>();
   final _telefonoUsuarioController = new BehaviorSubject<String>();
   final _ubicacionUsuarioController = new BehaviorSubject<String>();
+  final _observacionesUsuarioController = new BehaviorSubject<String>();
+  final _calificacionUsuarioController = new BehaviorSubject<double>();
 
   Function(List<UsuarioModel>) get usuariosSink =>
       _usuariosStreamController.sink.add;
@@ -29,10 +31,12 @@ class UsuariosStream with UsuarioValidator {
   set usuarioUsuario(UsuarioModel model) {
     _usuarioStreamController.sink.add(model);
     _idUsuarioController.sink.add(model.id ?? '');
-    _nombreUsuarioController.sink.add(model.nombre ?? '');
-    _apellidoUsuarioController.sink.add(model.apellido ?? '');
-    _telefonoUsuarioController.sink.add(model.telefono?.toString() ?? '');
-    _ubicacionUsuarioController.sink.add(model.ubicacion ?? '');
+    _nombreUsuarioController.sink.add(model?.nombre);
+    _apellidoUsuarioController.sink.add(model?.apellido);
+    _telefonoUsuarioController.sink.add(model.telefono?.toString() ?? null);
+    _ubicacionUsuarioController.sink.add(model?.ubicacion);
+    _observacionesUsuarioController.sink.add(model?.observaciones);
+    _calificacionUsuarioController.sink.add(model?.calificacion);
   }
 
   Stream<UsuarioModel> get usuarioStream => _usuarioStreamController.stream;
@@ -50,6 +54,10 @@ class UsuariosStream with UsuarioValidator {
       _telefonoUsuarioController.stream.transform(telefonoValidator);
   Stream<String> get ubicacionUsuarioStream =>
       _ubicacionUsuarioController.stream.transform(ubicacionValidator);
+  Stream<String> get observacionesUsuarioStream =>
+      _observacionesUsuarioController.stream;
+  Stream<double> get calificacionUsuarioStream =>
+      _calificacionUsuarioController.stream;
 
   setUbicacionUsuario(String model) {
     _ubicacionUsuarioController.sink.add(model);
@@ -62,32 +70,43 @@ class UsuariosStream with UsuarioValidator {
       _telefonoUsuarioController.sink.add;
   Function(String) get ubicacionUsuarioSink =>
       _ubicacionUsuarioController.sink.add;
+  Function(String) get observacionesUsuarioSink =>
+      _observacionesUsuarioController.sink.add;
+  Function(double) get calificacionUsuarioSink =>
+      _calificacionUsuarioController.sink.add;
 
   String get idUsuario => _idUsuarioController.value;
   String get nombreUsuario => _nombreUsuarioController.value;
   String get apellidoUsuario => _apellidoUsuarioController.value;
   String get telefonoUsuario => _telefonoUsuarioController.value;
   String get ubicacionUsuario => _ubicacionUsuarioController.value;
+  String get observacionesUsuario => _observacionesUsuarioController.value;
+  double get calificacionUsuario => _calificacionUsuarioController.value;
 
   Stream<bool> get formUsuarioValidStream => Rx.combineLatest3(
       nombreUsuarioStream,
       telefonoUsuarioStream,
       ubicacionUsuarioStream,
-      (n, t, u) => true);
+      (n, t, u) => (n != null && t != null && u != null));
 
   Future<UsuarioModel> getUsuario() async {
-    Stream<UsuarioModel> aux = Rx.combineLatest5(
+    Stream<UsuarioModel> aux = Rx.combineLatest7(
         idUsuarioStream,
         nombreUsuarioStream,
         apellidoUsuarioStream,
         telefonoUsuarioStream,
-        ubicacionUsuarioStream, (id, nombre, apellido, telefono, ubicacion) {
+        ubicacionUsuarioStream,
+        observacionesUsuarioStream,
+        calificacionUsuarioStream, (id, nombre, apellido, telefono, ubicacion,
+            observaciones, calificacion) {
       return new UsuarioModel(
           id: id,
           nombre: nombre,
           apellido: apellido,
           telefono: int.parse(telefono),
-          ubicacion: ubicacion);
+          ubicacion: ubicacion,
+          observaciones: observaciones,
+          calificacion: calificacion);
     });
     return await aux.first;
   }
@@ -110,5 +129,7 @@ class UsuariosStream with UsuarioValidator {
     _apellidoUsuarioController.close();
     _telefonoUsuarioController.close();
     _ubicacionUsuarioController.close();
+    _observacionesUsuarioController.close();
+    _calificacionUsuarioController.close();
   }
 }

@@ -19,12 +19,15 @@ class HomePage extends StatelessWidget {
 
   Widget _crearFloatingActionButton(BuildContext context) {
     final usuarioStream = BlocProvider.usuariosBloc(context);
-    return FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {
-          usuarioStream.usuarioUsuario = new UsuarioModel();
-          Navigator.of(context).pushNamed('ficha');
-        });
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 40.0),
+      child: FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: Theme.of(context).primaryColor,
+          onPressed: () {
+            usuarioStream.usuarioUsuario = new UsuarioModel();
+            Navigator.of(context).pushNamed('ficha');
+          }),
+    );
   }
 }

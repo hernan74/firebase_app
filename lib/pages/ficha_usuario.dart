@@ -5,6 +5,7 @@ import 'package:fire_base_app/utils/colores.dart';
 import 'package:fire_base_app/utils/hex_color_util.dart';
 import 'package:fire_base_app/widget/circular_progress_indicator.dart';
 import 'package:fire_base_app/widget/elevate_button.dart';
+import 'package:fire_base_app/widget/rating.dart';
 import 'package:fire_base_app/widget/textfield_stream_builder.dart';
 import 'package:flutter/material.dart';
 
@@ -82,12 +83,43 @@ class FichaPage extends StatelessWidget {
             SizedBox(
               height: 10.0,
             ),
+            TextfieldStreamBuilder(
+                stream: usuarioStream.observacionesUsuarioStream,
+                sink: usuarioStream.observacionesUsuarioSink,
+                valor: usuarioStream.observacionesUsuario,
+                labelText: 'Observaciones',
+                icon: Icons.info),
+            SizedBox(
+              height: 15.0,
+            ),
+            _crearCampoRating(context),
+            SizedBox(
+              height: 15.0,
+            ),
             _guardar(
               context,
             )
           ],
         ),
       ),
+    );
+  }
+
+  Widget _crearCampoRating(BuildContext context) {
+    final usuarioStream = BlocProvider.usuariosBloc(context);
+    return Column(
+      children: [
+        Text(
+          'Calificacion',
+          style: TextStyle(
+            fontSize: 18,
+          ),
+        ),
+        RatingCincoEstrellasWidget(
+          ratingStream: usuarioStream.calificacionUsuarioStream,
+          ratingSink: usuarioStream.calificacionUsuarioSink,
+        ),
+      ],
     );
   }
 
@@ -99,31 +131,35 @@ class FichaPage extends StatelessWidget {
     final usuarioService = new UsuarioServiceController(context);
     return StreamBuilder(
         stream: usuarioStream.formUsuarioValidStream,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return CustomButton(
             titulo: 'Guardar',
             colorBoton: snapshot.hasData
-                ? HexColor.fromHex(ColoresUtils.colorPrimarioFondo)
+                ? snapshot.data
+                    ? HexColor.fromHex(ColoresUtils.colorPrimarioFondo)
+                    : Colors.grey.shade400
                 : Colors.grey.shade400,
             icono: Icons.save,
             textSize: 18.0,
             onPress: snapshot.hasData
-                ? () async {
-                    bool resp;
-                    if (usuarioStream.idUsuario?.isEmpty ?? true) {
-                      resp = await usuarioService
-                          .nuevo(await usuarioStream.getUsuario());
-                    } else {
-                      resp = await usuarioService
-                          .modificar(await usuarioStream.getUsuario());
-                    }
-                    if (resp) {
-                      usuarioStream.usuarioUsuario = new UsuarioModel();
-                      latLngStream.latLngSeleccionadoSink(null);
-                      latLngStream.marker?.clear();
-                      Navigator.pop(context);
-                    }
-                  }
+                ? snapshot.data
+                    ? () async {
+                        bool resp;
+                        if (usuarioStream.idUsuario?.isEmpty ?? true) {
+                          resp = await usuarioService
+                              .nuevo(await usuarioStream.getUsuario());
+                        } else {
+                          resp = await usuarioService
+                              .modificar(await usuarioStream.getUsuario());
+                        }
+                        if (resp) {
+                          usuarioStream.usuarioUsuario = new UsuarioModel();
+                          latLngStream.latLngSeleccionadoSink(null);
+                          latLngStream.marker?.clear();
+                          Navigator.pop(context);
+                        }
+                      }
+                    : null
                 : null,
           );
         });
@@ -141,18 +177,18 @@ class FichaPage extends StatelessWidget {
                   UsuarioModel.getLatLgnCorto(usuariosStream.ubicacionUsuario),
             ),
             enableInteractiveSelection: false,
-            onTap: () async {
+            onTap: () {
               FocusScope.of(context).requestFocus(new FocusNode());
-              await Navigator.of(context).pushNamed('mapa');
+              Navigator.of(context).pushNamed('mapa');
             },
             decoration: InputDecoration(
                 labelText: 'Ubicacion',
                 prefixIcon: Icon(
                   Icons.location_on_outlined,
+                  color: HexColor.fromHex(ColoresUtils.colorPrimarioFondo),
                 ),
-                suffix: Icon(Icons.map),
                 border: OutlineInputBorder(),
-                errorText: snapshot.error),
+                errorText: snapshot?.error),
           );
         });
   }

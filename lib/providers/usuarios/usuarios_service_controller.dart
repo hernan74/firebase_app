@@ -21,6 +21,8 @@ class UsuarioServiceController {
     Map<String, dynamic> resp = await usuarioService.buscarTodos();
     if (resp['ok'] == true) {
       if (resp.containsKey('valor')) provider.cargarUsuarios(resp['valor']);
+    } else if (resp.containsKey('401')) {
+      Navigator.of(context).pushReplacementNamed('login');
     } else {
       mostrarSnackBar(context: context, msj: resp['mensaje']);
     }
@@ -36,6 +38,8 @@ class UsuarioServiceController {
         buscarTodos();
         return true;
       }
+    } else if (resp.containsKey('401')) {
+      Navigator.of(context).pushReplacementNamed('login');
     } else {
       mostrarSnackBar(context: context, msj: resp['mensaje']);
     }
@@ -55,6 +59,8 @@ class UsuarioServiceController {
         provider.estadoCargaSink(true);
         return true;
       }
+    } else if (resp.containsKey('401')) {
+      Navigator.of(context).pushReplacementNamed('login');
     } else {
       mostrarSnackBar(context: context, msj: resp['mensaje'], isError: true);
     }
@@ -68,6 +74,8 @@ class UsuarioServiceController {
     Map<String, dynamic> resp = await usuarioService.eliminar(id);
     if (resp['ok'] == true) {
       return true;
+    } else if (resp.containsKey('401')) {
+      Navigator.of(context).pushReplacementNamed('login');
     } else {
       mostrarSnackBar(context: context, msj: resp['mensaje'], isError: true);
     }

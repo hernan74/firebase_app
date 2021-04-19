@@ -29,8 +29,10 @@ class UsuariosService {
           lista.add(usuTemp);
         });
         return {'ok': true, 'valor': lista};
+      } else if (resp.statusCode == 401) {
+        return {'ok': false, '401': resp.reasonPhrase};
       } else {
-        return {'ok': false, 'mensaje': decodeData['error']['message']};
+        return {'ok': false, 'mensaje': resp.reasonPhrase};
       }
     } catch (e) {
       return {'ok': false, 'mensaje': e.toString()};
@@ -44,9 +46,15 @@ class UsuariosService {
     try {
       final resp = await http.post(url, body: usuarioModelToJson(model));
 
-      final dynamic decodeData = json.decode(resp.body);
+      if (resp.statusCode == 200) {
+        final dynamic decodeData = json.decode(resp.body);
 
-      return {'ok': true, 'valor': decodeData['name']};
+        return {'ok': true, 'valor': decodeData['name']};
+      } else if (resp.statusCode == 401) {
+        return {'ok': false, '401': resp.reasonPhrase};
+      } else {
+        return {'ok': false, 'mensaje': resp.reasonPhrase};
+      }
     } catch (e) {
       return {'ok': false, 'mensaje': e.toString()};
     }
@@ -58,9 +66,16 @@ class UsuariosService {
     });
     try {
       final resp = await http.put(url, body: usuarioModelToJson(model));
-
-
-      return {'ok': true, 'valor': UsuarioModel.fromJson(json.decode(resp.body))};
+      if (resp.statusCode == 200) {
+        return {
+          'ok': true,
+          'valor': UsuarioModel.fromJson(json.decode(resp.body))
+        };
+      } else if (resp.statusCode == 401) {
+        return {'ok': false, '401': resp.reasonPhrase};
+      } else {
+        return {'ok': false, 'mensaje': resp.reasonPhrase};
+      }
     } catch (e) {
       return {'ok': false, 'mensaje': e.toString()};
     }
@@ -73,10 +88,13 @@ class UsuariosService {
     try {
       final resp = await http.delete(url);
 
-      if (resp.statusCode == 200)
+      if (resp.statusCode == 200) {
         return {'ok': true, 'valor': 'Se elimino el usuario'};
-      else
-        return {'ok': false, 'mensaje': 'No se pudo eliminar el usuario'};
+      } else if (resp.statusCode == 401) {
+        return {'ok': false, '401': resp.reasonPhrase};
+      } else {
+        return {'ok': false, 'mensaje': resp.reasonPhrase};
+      }
     } catch (e) {
       return {'ok': false, 'mensaje': e.toString()};
     }
