@@ -1,16 +1,10 @@
 # fire_base_app
 
-A new Flutter project.
+Ejemplo con firebase acceso email: test@test.com clave: 123456. Realiza las validaciones en el stream, guarda en firebase y posee un mapa donde se puede seleccionar la ubicacion(para seleccionar una ubicacion seleccionar un punto del mapa y se agregara un marker al seleccionar el marker aparecera la latitud y longitud de la ubicacion si se hace click se cierra la ventana y devuelve la ubicacion seleccionada) 
 
-## Getting Started
+## Diseño de ventanas
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Pagina Login](imagen1.png)
+![Pagina Nuevo usuario](imagen2.png)
+![Pagina Principal](imagen3.png)
+![Pagina mapa](imagen4.png)

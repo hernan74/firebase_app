@@ -63,6 +63,7 @@ class _MapaPageState extends State<MapaPage> {
           snippet:
               ' ${latLng.latitude.toStringAsFixed(7)} , ${latLng.longitude.toStringAsFixed(7)} ',
           onTap: () {
+            if (!mounted) return;
             Navigator?.pop(context);
             latLngBloc.latLngSeleccionadoSink(latLng);
             usuariosStream.setUbicacionUsuario(
