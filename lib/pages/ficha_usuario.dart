@@ -182,7 +182,7 @@ class FichaPage extends StatelessWidget {
               Navigator.of(context).pushNamed('mapa');
             },
             decoration: InputDecoration(
-                labelText: 'Ubicacion',
+                labelText: 'Click para abrir mapa',
                 prefixIcon: Icon(
                   Icons.location_on_outlined,
                   color: HexColor.fromHex(ColoresUtils.colorPrimarioFondo),
